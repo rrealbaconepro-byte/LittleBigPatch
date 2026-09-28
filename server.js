@@ -7,15 +7,15 @@ const PORT = process.env.PORT || 10000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve everything inside /public
+// Serve the website
 app.use(express.static(path.join(__dirname, "public")));
 
-// Main page
+// Homepage
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Basic server status API
+// Server status
 app.get("/api/status", (req, res) => {
   res.json({
     online: true,
@@ -25,18 +25,18 @@ app.get("/api/status", (req, res) => {
   });
 });
 
-// Example API for newest levels
+// Newest Levels API
 app.get("/api/levels", (req, res) => {
   res.json({
     levels: []
   });
 });
 
-// Fallback to the main site
-app.get("*", (req, res) => {
+// Express 5-compatible fallback
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`LittleBigPatch running on port ${PORT}`);
 });
