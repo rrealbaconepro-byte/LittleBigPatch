@@ -7,12 +7,12 @@ const PORT = process.env.PORT || 10000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve everything inside /public
-app.use(express.static(path.join(__dirname, "public")));
+// Serve files from the repository root
+app.use(express.static(__dirname));
 
-// Automatically send users to index.html
+// Always load index.html for the homepage
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
 // Server status
@@ -32,13 +32,12 @@ app.get("/api/levels", (req, res) => {
   });
 });
 
-// If a page doesn't exist, load index.html instead of showing Not Found
+// Send index.html instead of Not Found
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// Start server
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`LittleBigPatch is running on port ${PORT}`);
-  console.log(`Serving: ${path.join(__dirname, "public", "index.html")}`);
+  console.log(`Serving: ${path.join(__dirname, "index.html")}`);
 });
