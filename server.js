@@ -4,40 +4,33 @@ const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Basic middleware only
+app.use(express.json({ limit: "100kb" }));
+app.use(express.urlencoded({ extended: false, limit: "100kb" }));
 
-// Serve files from the repository root
-app.use(express.static(__dirname));
+// Serve files from this project
+app.use(express.static(__dirname, {
+  index: false
+}));
 
-// Always load index.html for the homepage
+// Homepage
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// Server status
+// Simple health check for Render
 app.get("/api/status", (req, res) => {
   res.json({
     online: true,
-    name: "LittleBigPatch",
-    status: "online",
-    time: new Date().toISOString()
+    service: "LittleBigPatch"
   });
 });
 
-// Newest Levels
-app.get("/api/levels", (req, res) => {
-  res.json({
-    levels: []
-  });
-});
-
-// Send index.html instead of Not Found
+// Everything else
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+  res.status(404).send("LittleBigPatch: Page not found");
 });
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`LittleBigPatch is running on port ${PORT}`);
-  console.log(`Serving: ${path.join(__dirname, "index.html")}`);
+  console.log(`LittleBigPatch server running on port ${PORT}`);
 });
